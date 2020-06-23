@@ -1,93 +1,158 @@
 from tkinter import ttk
 import tkinter as tk
 import Stocks
+import csv
 
 class Application(tk.Frame):
     
-    def __init__(self, master, image):
+    def __init__(self, master, image, labelBG):
         self.image = image
+        self.labelBG = labelBG
         self.master = master
         tk.Frame.__init__(self, self.master)
+
         self.pack()
         
     def createWindow(self):
         self.window = tk.Label(self.master, image = self.image).place(x=0,y=0,relwidth=1, relheight=1)
-
+        
     def addTitle(self, tmaster, txt):
         img = tk.PhotoImage(file = 'labelcollection.png')
-        label = tk.Label(tmaster, text = txt, image = img, height = 50, bg='black', compound = 'center', font=('Sylfaen', 50, 'italic')).place(relx = 0.5, rely = 0.9, anchor = 'center')
+        label = tk.Label(tmaster, text = txt, image = img, width = 200, height = 50, bg='black', compound = 'center', font=('Sylfaen', 50, 'italic')).place(relx = 0.5, rely = 0.9, anchor = 'center')
         self.image = img
+    
+    def exportCollection(self):
+        file = tk.filedialog.asksaveasfile(defaultextension = '*.csv')
+        with open(file, 'w', newline='') as csvfile:
+            collectionWriter = csv.writer(csvfile, delimiter=' ',
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+            collectionWriter.writerow(['Collection] * 5 '])
+            collectionWriter.writerow(['model', 'price', 'year'])
+        filename.close()
 
-    def createButton(self, bmaster, btext, bx, by, banchor, bcommand=None):
-        button = ttk.Button(bmaster, text = btext, command = bcommand).place(relx=bx, rely=by, anchor=banchor)
-
-    def createTextEntry(self, emaster, ewidth, eheight, ex, ey, eanchor, ename):        
-        text = tk.Text(master = emaster, width = ewidth, height = eheight).place(relx=ex, rely=ey, anchor=eanchor)
-        label = tk.Label(master = emaster, width = 10, height = 1, text = ename, font=('Sylfaen', 14, 'bold')).place(relx=(ex-0.2),rely=(ey), anchor=eanchor)
-                       
-    def downloadCollection(self):
-        #download to excel spreadsheet
-        pass
-
-    def addCollection(self):
-        #add to collection
-        pass
-
+    def importCollection(self):
+        filename = tk.filedialog.askopenfile()
+        with open(filename, newline='') as csvfile:
+            collectionReader = csv.DictReader(csvfile)
+            for row in reader:
+                print(row[''], row[''])
+        filename.close()
+    
+    def addCollection(self, *argv):
+            for arg in argv:
+                print(arg)   
+    
     def stockWindow(self):
-        s = Application(self.master, self.image)
+        s = Application(self.master, self.image, self.labelBG)
         s.createWindow()
         title = s.addTitle(self.master, 'Stocks')
         
-        ticker = s.createTextEntry(self.master, 20, 1, 0.6, 0.235, 'center', 'Ticker:')
-        company = s.createTextEntry(self.master, 20, 1, 0.6, 0.315, 'center', 'Company:')
-        price = s.createTextEntry(self.master, 20, 1, 0.6, 0.4, 'center', 'Price:')
+        ticker = ttk.Entry(self.master, width = 20, text = 'Ticker:')
+        ticker.place(relx = 0.575, rely = 0.235, anchor = 'center')
+        company = ttk.Entry(self.master, width = 20, text = 'Company:')
+        company.place(relx = 0.575, rely = 0.315, anchor = 'center')
+        price = ttk.Entry(self.master, width = 20, text = 'Price:')
+        price.place(relx = 0.575, rely = 0.395, anchor = 'center')
+
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Ticker', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.235), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Company', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.315), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Price', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.395), anchor='center')
         
         stock = tk.StringVar()
         ttk.Radiobutton(self.master, text = 'Owned', variable = stock, value = 'Owned').place(relx=0.55, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Watching', variable = stock, value = 'Watching').place(relx=0.556, rely=0.51, anchor= 'center')
-        s.createButton(self.master, 'Add to Portfolio', 0.565, 0.66, 'center', self.addCollection)
-        s.createButton(self.master, 'Menu', 0.05, 0.945, 'sw', self.menuWindow)
-        s.createButton(self.master, 'Download Portfolio', 0.98, 0.95, 'se', self.downloadCollection)
+        
+        add = ttk.Button(self.master, text = 'Add to Portfolio', command = lambda: self.addCollection(ticker.get(), company.get(), price.get(), stock)).place(relx=0.565, rely=0.66, anchor='center')
+        menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
 
     def vinylWindow(self):
-        v = Application(self.master, self.image)
+        v = Application(self.master, self.image, self.labelBG)
         v.createWindow()
         v.addTitle(self.master, 'Vinyl')
+
+        album = ttk.Entry(self.master, width = 20, text = 'Album:')
+        album.place(relx = 0.575, rely = 0.235, anchor = 'center')
+        artist = ttk.Entry(self.master, width = 20, text = 'Artist:')
+        artist.place(relx = 0.575, rely = 0.315, anchor = 'center')
+        year = ttk.Entry(self.master, width = 20, text = 'Year:')
+        year.place(relx = 0.575, rely = 0.395, anchor = 'center')
+
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Album', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.235), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Artist', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.315), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Year', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.395), anchor='center')
         
-        v.createButton(self.master, 'Menu', 0.05, 0.945, 'sw', self.menuWindow)
-        v.createButton(self.master, 'Download Collection', 0.98, 0.95, 'se', self.downloadCollection)
-        v.createButton(self.master, 'Add to collection', 0.565, 0.66, 'center', self.addCollection)
+        owned = tk.StringVar()        
+        ttk.Radiobutton(self.master, text = 'Want', variable = owned, value = 'Want').place(relx=0.54, rely=0.475, anchor= 'center')
+        ttk.Radiobutton(self.master, text = 'Owned', variable = owned, value = 'Owned').place(relx=0.545, rely=0.505, anchor= 'center')
+        
+        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(album.get(), artist.get(), year.get(), owned)).place(relx=0.565, rely=0.66, anchor='center')
+        menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
 
     def watchesWindow(self):
-        w = Application(self.master, self.image)
+        w = Application(self.master, self.image, self.labelBG)
         w.createWindow()
         w.addTitle(self.master, 'Watch')
+
+        model = ttk.Entry(self.master, width = 20, text = 'Model:')
+        model.place(relx = 0.575, rely = 0.235, anchor = 'center')
+        company = ttk.Entry(self.master, width = 20, text = 'Company:')
+        company.place(relx = 0.575, rely = 0.315, anchor = 'center')
+        price = ttk.Entry(self.master, width = 20, text = 'Price:')
+        price.place(relx = 0.575, rely = 0.395, anchor = 'center')
+
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Model', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.235), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Company', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.315), anchor='center')
+        label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Price', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.395), anchor='center')
         
-        w.createButton(self.master, 'Menu', 0.05, 0.945, 'sw', self.menuWindow)
-        w.createButton(self.master, 'Download Collection', 0.98, 0.95, 'se', self.downloadCollection)
-        model = w.createTextEntry(self.master, 20, 1, 0.6, 0.235, 'center', 'Model:')
-        company = w.createTextEntry(self.master, 20, 1, 0.6, 0.315, 'center', 'Company:')
-        price = w.createTextEntry(self.master, 20, 1, 0.6, 0.4, 'center', 'Price:')
         power = tk.StringVar()
         ttk.Radiobutton(self.master, text = 'Automatic', variable = power, value = 'Automatic').place(relx=0.56, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Quartz/Battery', variable = power, value = 'Quartz/Battery').place(relx=0.57, rely=0.505, anchor= 'center')
-        w.createButton(self.master, 'Add to collection', 0.565, 0.66, 'center', self.addCollection)
+
+        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(model.get(), company.get(), price.get(), power)).place(relx=0.565, rely=0.66, anchor='center')        
+        menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
         
-    def menuWindow(self):
-        m = Application(self.master, self.image)
+    def mainWindow(self):
+        m = Application(self.master, self.image, self.labelBG)
         m.createWindow()
         m.addTitle(self.master, 'Menu')
-        m.createButton(self.master, 'Stocks', 0.35, 0.235, 'center', self.stockWindow)
-        m.createButton(self.master, 'Vinyl Collection', 0.357, 0.315, 'center', self.vinylWindow)
-        m.createButton(self.master, 'Watch Collection', 0.36, 0.4, 'center', self.watchesWindow)
+        stocks = ttk.Button(self.master, text = 'Stock Portfolio', command = self.stockWindow).place(relx=0.5,rely=0.235,anchor='center')
+        vinyl = ttk.Button(self.master, text = 'Vinyl Collection', command = self.vinylWindow).place(relx=0.5,rely=0.315,anchor='center')
+        watch = ttk.Button(self.master, text = 'Watch Collection', command = self.watchesWindow).place(relx=0.5,rely=0.4,anchor='center')
+
+    def createMenuBar(self, master):
+        menubar = tk.Menu(master)
+        master.config(menu = menubar)
+        file = tk.Menu(menubar)
+        help_ = tk.Menu(menubar)
+        
+        menubar.add_cascade(menu = file, label = "File")
+        file.add_separator()
+        file.add_command(label = 'New', command = lambda: print('New Collection'))
+        file.add_separator()
+        file.add_command(label = 'Import', command = self.importCollection)
+        file.add_separator()
+        file.add_command(label = 'Export', command = self.exportCollection)
+        
+        menubar.add_cascade(menu = help_, label = "Help")
+        help_.add_separator()
+        help_.add_command(label = 'Read Me', command = lambda: print('Read Me'))
+        help_.add_separator()
 
 def main():
     root = tk.Tk()
     root.title("Collection-boi")
     background = tk.PhotoImage(file = 'collection.png')
-    app = Application(root, background)
-    app.menuWindow()
+    labelbackground = tk.PhotoImage(file = 'labelBG.gif')
+    labelbackground = labelbackground.subsample(10,20)
     root.resizable(False,False)
     root.geometry("1000x600")
-    
+
+    style = ttk.Style()
+    style.theme_use('xpnative')
+    style.configure('TButton', background = 'black')
+
+    app = Application(root, background, labelbackground)
+    app.mainWindow()
+    app.createMenuBar(root)
+
 if __name__ == "__main__": main()
