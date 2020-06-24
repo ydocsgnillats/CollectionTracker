@@ -17,7 +17,7 @@ class Application(tk.Frame):
         self.window = tk.Label(self.master, image = self.image).place(x=0,y=0,relwidth=1, relheight=1)
         
     def addTitle(self, tmaster, txt):
-        img = tk.PhotoImage(file = 'labelcollection.png')
+        img = tk.PhotoImage(file = 'images/labelcollection.png')
         label = tk.Label(tmaster, text = txt, image = img, width = 200, height = 50, bg='black', compound = 'center', font=('Sylfaen', 50, 'italic')).place(relx = 0.5, rely = 0.9, anchor = 'center')
         self.image = img
     
@@ -141,8 +141,8 @@ class Application(tk.Frame):
 def main():
     root = tk.Tk()
     root.title("Collection-boi")
-    background = tk.PhotoImage(file = 'collection.png')
-    labelbackground = tk.PhotoImage(file = 'labelBG.gif')
+    background = tk.PhotoImage(file = 'images/collection.png')
+    labelbackground = tk.PhotoImage(file = 'images/labelBG.gif')
     labelbackground = labelbackground.subsample(10,20)
     root.resizable(False,False)
     root.geometry("1000x600")
