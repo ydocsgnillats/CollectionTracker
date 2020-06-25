@@ -1,7 +1,11 @@
 from tkinter import ttk
 import tkinter as tk
-import Stocks
+import tkinter.filedialog
 import csv
+import json
+import pandas as pd
+
+collectionList = []
 
 class Application(tk.Frame):
     
@@ -9,6 +13,7 @@ class Application(tk.Frame):
         self.image = image
         self.labelBG = labelBG
         self.master = master
+        self.key = 0
         tk.Frame.__init__(self, self.master)
 
         self.pack()
@@ -20,28 +25,23 @@ class Application(tk.Frame):
         img = tk.PhotoImage(file = 'images/labelcollection.png')
         label = tk.Label(tmaster, text = txt, image = img, width = 200, height = 50, bg='black', compound = 'center', font=('Sylfaen', 50, 'italic')).place(relx = 0.5, rely = 0.9, anchor = 'center')
         self.image = img
-    
+
     def exportCollection(self):
-        file = tk.filedialog.asksaveasfile(defaultextension = '*.csv')
-        with open(file, 'w', newline='') as csvfile:
-            collectionWriter = csv.writer(csvfile, delimiter=' ',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
-            collectionWriter.writerow(['Collection] * 5 '])
-            collectionWriter.writerow(['model', 'price', 'year'])
-        filename.close()
+        file = tk.filedialog.asksaveasfile()
+        pdObj = pd.read_json('tempCollection.json')
+        csvData = pdObj.to_csv(file, index=False)
 
     def importCollection(self):
-        filename = tk.filedialog.askopenfile()
-        with open(filename, newline='') as csvfile:
-            collectionReader = csv.DictReader(csvfile)
-            for row in reader:
-                print(row[''], row[''])
-        filename.close()
+        file = tk.filedialog.askopenfile()
+        inFile = pd.read_csv(file)
+        inFile.to_json(r'tempImport.json')
     
-    def addCollection(self, *argv):
-            for arg in argv:
-                print(arg)   
-    
+    def addCollection(self, data):
+        global collectionList
+        collectionList.append(data)
+        with open('tempCollection.json', 'w') as outfile:
+            json.dump(collectionList, outfile)
+            
     def stockWindow(self):
         s = Application(self.master, self.image, self.labelBG)
         s.createWindow()
@@ -62,7 +62,7 @@ class Application(tk.Frame):
         ttk.Radiobutton(self.master, text = 'Owned', variable = stock, value = 'Owned').place(relx=0.55, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Watching', variable = stock, value = 'Watching').place(relx=0.556, rely=0.51, anchor= 'center')
         
-        add = ttk.Button(self.master, text = 'Add to Portfolio', command = lambda: self.addCollection(ticker.get(), company.get(), price.get(), stock)).place(relx=0.565, rely=0.66, anchor='center')
+        add = ttk.Button(self.master, text = 'Add to Portfolio', command = lambda: self.addCollection(data={"ticker":ticker.get(), "company":company.get(), "price":price.get()})).place(relx=0.565, rely=0.66, anchor='center')
         menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
 
     def vinylWindow(self):
@@ -85,7 +85,7 @@ class Application(tk.Frame):
         ttk.Radiobutton(self.master, text = 'Want', variable = owned, value = 'Want').place(relx=0.54, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Owned', variable = owned, value = 'Owned').place(relx=0.545, rely=0.505, anchor= 'center')
         
-        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(album.get(), artist.get(), year.get(), owned)).place(relx=0.565, rely=0.66, anchor='center')
+        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(data={"album":album.get(), "artist":artist.get(), "year":year.get()})).place(relx=0.565, rely=0.66, anchor='center')
         menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
 
     def watchesWindow(self):
@@ -108,7 +108,7 @@ class Application(tk.Frame):
         ttk.Radiobutton(self.master, text = 'Automatic', variable = power, value = 'Automatic').place(relx=0.56, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Quartz/Battery', variable = power, value = 'Quartz/Battery').place(relx=0.57, rely=0.505, anchor= 'center')
 
-        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(model.get(), company.get(), price.get(), power)).place(relx=0.565, rely=0.66, anchor='center')        
+        add = ttk.Button(self.master, text = 'Add to Collection', command = lambda: self.addCollection(data={"model":model.get(), "company":company.get(), "price":price.get()})).place(relx=0.565, rely=0.66, anchor='center')        
         menu = ttk.Button(self.master, text = 'Menu', command = self.mainWindow).place(relx=0.05, rely=0.945, anchor='sw')
         
     def mainWindow(self):
