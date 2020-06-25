@@ -7,6 +7,7 @@ import pandas as pd
 
 collectionList = []
 
+#todo delete entrybox upon addtocollection, move file functions to a new class/file, correct json formatting
 class Application(tk.Frame):
     
     def __init__(self, master, image, labelBG):
