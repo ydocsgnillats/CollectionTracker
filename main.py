@@ -1,4 +1,3 @@
-# Write your code here :-)
 from tkinter import ttk
 import tkinter as tk
 import tkinter.filedialog
