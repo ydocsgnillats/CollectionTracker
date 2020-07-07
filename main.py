@@ -3,6 +3,14 @@ import tkinter as tk
 import tkinter.filedialog
 import csv
 import json
+
+import sys
+import os
+
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using :0.0')
+    os.environ.__setitem__('DISPLAY', ':0.0')
+
 import pandas as pd
 
 collectionList = []
@@ -28,12 +36,12 @@ class Application(tk.Frame):
 
     def exportCollection(self):
         file = tk.filedialog.asksaveasfile()
-        pdObj = pd.read_json('tempCollection.json')
-        csvData = pdObj.to_csv(file, index=False)
+        #pdObj = pd.read_json('tempCollection.json')
+        #csvData = pdObj.to_csv(file, index=False)
 
     def importCollection(self):
         file = tk.filedialog.askopenfile()
-        inFile = pd.read_csv(file)
+        #inFile = pd.read_csv(file)
         inFile.to_json(r'tempImport.json')
 
     def addCollection(self, data):
@@ -104,7 +112,7 @@ class Application(tk.Frame):
         label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Company', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.315), anchor='center')
         label = ttk.Label(self.master, width = 8, image = self.labelBG, compound = 'center', text = 'Price', font=('Sylfaen', 14, 'normal')).place(relx=0.4,rely=(0.395), anchor='center')
 
-        power = tk.Ssong.txttringVar()
+        power = tk.StringVar()
         ttk.Radiobutton(self.master, text = 'Automatic', variable = power, value = 'Automatic').place(relx=0.56, rely=0.475, anchor= 'center')
         ttk.Radiobutton(self.master, text = 'Quartz/Battery', variable = power, value = 'Quartz/Battery').place(relx=0.57, rely=0.505, anchor= 'center')
 
@@ -148,7 +156,6 @@ def main():
     root.geometry("1000x600")
 
     style = ttk.Style()
-    style.theme_use('xpnative')
     style.configure('TButton', background = 'black')
 
     app = Application(root, background, labelbackground)
